@@ -4,16 +4,32 @@ on:
     branches:
       - main
 
+# 定义工作流阶段
 jobs:
-  build-and-deploy:
-    name: 构建并部署博客
+  # 安装依赖阶段
+  install:
+    name: 安装依赖
     runs-on: ubuntu-latest
     steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           registry-url: "https://registry.npmmirror.com"
+
+      - name: 缓存依赖
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: 安装 pnpm
         run: |
@@ -22,17 +38,67 @@ jobs:
           pnpm --version
 
       - name: 安装依赖
+        if: steps.cache-dependencies.outputs.cache-hit != 'true' || contains(github.event.head_commit.message, 'package.json')
         run: |
+          echo "安装项目依赖..."
           pnpm install
           # 如果构建时间过长，可以手动安装 pagefind
           pnpm add pagefind --dev
-
+        
+  # 构建阶段
+  build:
+    name: 构建博客
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmmirror.com"
+          
+      - name: 恢复缓存依赖
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package.json') }}
+          
+      - name: 安装 pnpm
+        run: |
+          npm install -g pnpm --registry=https://registry.npmmirror.com
+          
       - name: 构建博客
         run: |
           pnpm build
           echo "博客构建完成！"
           ls -la docs/.vitepress/dist
-
+          
+      - name: 缓存构建产物
+        uses: actions/cache@v3
+        with:
+          path: docs/.vitepress/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+          
+  # 部署阶段
+  deploy:
+    name: 部署到S3
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 恢复构建产物
+        uses: actions/cache@v3
+        with:
+          path: docs/.vitepress/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+          
       - name: 安装 AWS CLI
         run: |
           echo "安装 AWS CLI..."
