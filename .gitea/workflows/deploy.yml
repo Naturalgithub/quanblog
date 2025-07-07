@@ -13,10 +13,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          registry-url: "https://registry.npmmirror.com"
 
       - name: 安装 pnpm
         run: |
-          npm install -g pnpm
+          npm install -g pnpm --registry=https://registry.npmmirror.com
+          pnpm config set registry https://registry.npmmirror.com
           pnpm --version
 
       - name: 安装依赖
