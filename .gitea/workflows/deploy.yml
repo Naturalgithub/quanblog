@@ -14,6 +14,10 @@ jobs:
       image: node:22-alpine
       options: --user root
     steps:
+      # 检出代码
+      - name: 检出代码
+        uses: actions/checkout@v4
+
       # 安装 pnpm
       - name: 安装 pnpm
         run: |
