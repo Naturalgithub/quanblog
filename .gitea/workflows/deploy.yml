@@ -9,17 +9,15 @@ jobs:
   build-and-deploy:
     name: 构建并部署博客
     runs-on: ubuntu-latest
+    # 使用 Docker 容器
+    container:
+      image: node:22-alpine
+      options: --user root
     steps:
-      - name: 设置 Node.js 环境
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22-alpine"
-          registry-url: "https://registry.npmmirror.com"
-
       # 缓存依赖
       - name: 缓存依赖
         id: cache-dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v1
         with:
           path: |
             node_modules
@@ -53,7 +51,7 @@ jobs:
 
       # 缓存构建产物
       - name: 缓存构建产物
-        uses: actions/cache@v3
+        uses: actions/cache@v1
         with:
           path: docs/.vitepress/dist
           key: ${{ runner.os }}-dist-${{ github.sha }}
@@ -62,7 +60,8 @@ jobs:
       - name: 安装 AWS CLI
         run: |
           echo "安装 AWS CLI..."
-          apt-get update && apt-get install -y curl unzip python3 python3-pip
+          # Alpine环境下安装AWS CLI
+          apk add --no-cache python3 py3-pip curl
           pip3 install awscli
           aws --version || echo "AWS CLI未找到"
 
