@@ -6,17 +6,17 @@ on:
 
 # 定义工作流阶段
 jobs:
-  # 安装依赖阶段
-  install:
-    name: 安装依赖
+  build-and-deploy:
+    name: 构建并部署博客
     runs-on: ubuntu-latest
-    container:
-      image: node:22-alpine
-      options: --user root
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22-alpine"
+          registry-url: "https://registry.npmmirror.com"
 
+      # 缓存依赖
       - name: 缓存依赖
         id: cache-dependencies
         uses: actions/cache@v3
@@ -28,14 +28,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: 安装 pnpm 并配置镜像源
+      # 安装 pnpm
+      - name: 安装 pnpm
         run: |
-          # 在Alpine环境中安装pnpm
-          apk add --no-cache curl
           npm install -g pnpm@latest --registry=https://registry.npmmirror.com
           pnpm config set registry https://registry.npmmirror.com
           pnpm --version
 
+      # 安装依赖
       - name: 安装依赖
         if: steps.cache-dependencies.outputs.cache-hit != 'true' || contains(github.event.head_commit.message, 'package.json')
         run: |
@@ -43,62 +43,22 @@ jobs:
           pnpm install
           # 如果构建时间过长，可以手动安装 pagefind
           pnpm add pagefind --dev
-        
-  # 构建阶段
-  build:
-    name: 构建博客
-    needs: install
-    runs-on: ubuntu-latest
-    container:
-      image: node:22-alpine
-      options: --user root
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-          
-      - name: 恢复缓存依赖
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package.json') }}
-          
-      - name: 安装 pnpm 并配置镜像源
-        run: |
-          # 在Alpine环境中安装pnpm
-          apk add --no-cache curl
-          npm install -g pnpm@latest --registry=https://registry.npmmirror.com
-          pnpm config set registry https://registry.npmmirror.com
-          
+
+      # 构建博客
       - name: 构建博客
         run: |
           pnpm build
           echo "博客构建完成！"
           ls -la docs/.vitepress/dist
-          
+
+      # 缓存构建产物
       - name: 缓存构建产物
         uses: actions/cache@v3
         with:
           path: docs/.vitepress/dist
           key: ${{ runner.os }}-dist-${{ github.sha }}
-          
-  # 部署阶段
-  deploy:
-    name: 部署到S3
-    needs: build
-    runs-on: ubuntu-latest
-    # 部署阶段使用原生环境，因为需要安装 AWS CLI
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-        
-      - name: 恢复构建产物
-        uses: actions/cache@v3
-        with:
-          path: docs/.vitepress/dist
-          key: ${{ runner.os }}-dist-${{ github.sha }}
-          
+
+      # 安装 AWS CLI
       - name: 安装 AWS CLI
         run: |
           echo "安装 AWS CLI..."
