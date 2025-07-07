@@ -16,7 +16,7 @@ jobs:
     steps:
       # 检出代码
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v1
 
       # 安装必要的系统依赖
       - name: 安装系统依赖
