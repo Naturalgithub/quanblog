@@ -1,0 +1,69 @@
+name: 部署博客到S3
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: 构建并部署博客
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.17.0"
+
+      - name: 安装 pnpm
+        run: |
+          npm install -g pnpm
+          pnpm --version
+
+      - name: 安装依赖
+        run: |
+          pnpm install
+          # 如果构建时间过长，可以手动安装 pagefind
+          pnpm add pagefind --dev
+
+      - name: 构建博客
+        run: |
+          pnpm build
+          echo "博客构建完成！"
+          ls -la docs/.vitepress/dist
+
+      - name: 安装 AWS CLI
+        run: |
+          echo "安装 AWS CLI..."
+          apt-get update && apt-get install -y curl unzip
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
+
+      - name: 配置 AWS
+        run: |
+          echo "配置 AWS 凭证..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set output json
+          aws configure set default.s3.addressing_style path
+          aws configure set default.s3.payload_signing_enabled true
+
+      - name: 部署到 S3
+        run: |
+          echo "正在部署博客到 S3..."
+          # 使用 --delete 参数删除目标位置上已经不存在于源位置的文件
+          # 使用 --cache-control 参数设置缓存控制
+          aws s3 sync docs/.vitepress/dist/ s3://115-web/blog/ \
+            --delete \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
+
+      - name: 部署完成通知
+        run: |
+          echo "博客已成功部署到 S3！"
+          echo "访问地址: http://home.yuanquanke.cn:35246/115-web/blog/index.html"
