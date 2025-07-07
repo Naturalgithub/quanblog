@@ -31,7 +31,7 @@ jobs:
           echo "安装项目依赖..."
           pnpm install
           # 如果构建时间过长，可以手动安装 pagefind
-          pnpm add pagefind --dev
+          pnpm add pagefind -D
 
       # 构建博客
       - name: 构建博客
