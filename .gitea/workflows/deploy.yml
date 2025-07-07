@@ -16,7 +16,10 @@ jobs:
     steps:
       # 检出代码
       - name: 检出代码
-        uses: actions/checkout@v1
+        run: |
+          echo "手动检出代码..."
+          git clone https://gitea.com/${{ github.repository }}.git .
+          git checkout ${{ github.sha }}
 
       # 安装必要的系统依赖
       - name: 安装系统依赖
