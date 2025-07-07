@@ -22,8 +22,7 @@ jobs:
       - name: 安装系统依赖
         run: |
           echo "安装 git 和其他必要的工具..."
-          apk add --no-cache git
-
+          apt update && apt install -y git
       # 安装 pnpm
       - name: 安装 pnpm
         run: |
