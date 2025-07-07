@@ -14,18 +14,6 @@ jobs:
       image: node:22-alpine
       options: --user root
     steps:
-      # 缓存依赖
-      - name: 缓存依赖
-        id: cache-dependencies
-        uses: actions/cache@v1
-        with:
-          path: |
-            node_modules
-            ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
       # 安装 pnpm
       - name: 安装 pnpm
         run: |
@@ -35,7 +23,6 @@ jobs:
 
       # 安装依赖
       - name: 安装依赖
-        if: steps.cache-dependencies.outputs.cache-hit != 'true' || contains(github.event.head_commit.message, 'package.json')
         run: |
           echo "安装项目依赖..."
           pnpm install
@@ -48,13 +35,6 @@ jobs:
           pnpm build
           echo "博客构建完成！"
           ls -la docs/.vitepress/dist
-
-      # 缓存构建产物
-      - name: 缓存构建产物
-        uses: actions/cache@v1
-        with:
-          path: docs/.vitepress/dist
-          key: ${{ runner.os }}-dist-${{ github.sha }}
 
       # 安装 AWS CLI
       - name: 安装 AWS CLI
