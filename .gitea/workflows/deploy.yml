@@ -10,9 +10,9 @@ jobs:
     name: 构建并部署博客
     runs-on: ubuntu-latest
     # 使用 Docker 容器
-    # container:
-    #   image: node:22-alpine
-    #   options: --user root
+    container:
+      image: node:22-alpine
+      options: --user root
     steps:
       # 检出代码
       - name: 检出代码
