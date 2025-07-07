@@ -14,18 +14,18 @@ jobs:
       image: node:22-alpine
       options: --user root
     steps:
+      # 安装必要的系统依赖
+      - name: 安装系统依赖
+        run: |
+          echo "安装 git 和其他必要的工具..."
+          apk add --no-cache git
+      
       # 检出代码
       - name: 检出代码
         run: |
           echo "手动检出代码..."
           git clone https://gitea.com/${{ github.repository }}.git .
           git checkout ${{ github.sha }}
-
-      # 安装必要的系统依赖
-      - name: 安装系统依赖
-        run: |
-          echo "安装 git 和其他必要的工具..."
-          apk add --no-cache git
       
       # 安装 pnpm
       - name: 安装 pnpm
