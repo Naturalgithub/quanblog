@@ -40,45 +40,48 @@ jobs:
           echo "检查构建结果..."
           ls -la /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist || echo "构建目录不存在"
 
-      # 安装 AWS CLI
-      - name: 安装AWS CLI
+      # 使用 Docker 运行 AWS CLI
+      - name: 使用 Docker 运行 AWS CLI
         run: |
-          echo "安装AWS CLI..."
-          apt-get update && apt-get install -y curl unzip
+          echo "拉取 AWS CLI Docker 镜像..."
+          # 拉取 AWS CLI 官方 Docker 镜像
+          docker pull public.ecr.aws/aws-cli/aws-cli:latest || \
+          docker pull amazon/aws-cli:latest || \
+          echo "AWS CLI Docker 镜像拉取失败，但继续执行"
 
-          # 尝试从国内镜像下载，如果失败则使用官方源
-          echo "下载 AWS CLI 安装包..."
-          curl "https://mirrors.huaweicloud.com/aws-cli/2.15.0/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 10 --retry 2 --retry-delay 2 || \
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 --retry-delay 2
+          # 创建 AWS 配置目录
+          mkdir -p ~/.aws
 
-          # 解压并安装
-          echo "解压 AWS CLI 安装包..."
-          unzip -q awscliv2.zip
-          echo "安装 AWS CLI..."
-          ./aws/install
-
-          # 清理安装文件
-          rm -rf awscliv2.zip aws
-
-          # 验证安装
-          echo "验证 AWS CLI 安装..."
-          /usr/local/bin/aws --version || echo "AWS CLI 安装失败，但继续执行"
-
-      # 配置 AWS
-      - name: 配置 AWS
-        run: |
+          # 配置 AWS 凭证
           echo "配置 AWS 凭证..."
-          /usr/local/bin/aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          /usr/local/bin/aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          /usr/local/bin/aws configure set output json
-          /usr/local/bin/aws configure set default.s3.addressing_style path
-          /usr/local/bin/aws configure set default.s3.payload_signing_enabled true
+          cat > ~/.aws/credentials << EOF
+          [default]
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          EOF
 
-      # 上传到 S3
-      - name: 上传到 W3 存储
-        run: |
+          # 配置 AWS 设置
+          cat > ~/.aws/config << EOF
+          [default]
+          output = json
+          s3 =
+              addressing_style = path
+              payload_signing_enabled = true
+          EOF
+
+          # 使用 Docker 运行 AWS CLI 上传文件
           echo "上传到 W3 存储..."
-          /usr/local/bin/aws s3 cp /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist s3://115-web/blog/ \
+          docker run --rm \
+            -v ~/.aws:/root/.aws \
+            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/aws/dist \
+            public.ecr.aws/aws-cli/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
+            --recursive \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246 || \
+          docker run --rm \
+            -v ~/.aws:/root/.aws \
+            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/aws/dist \
+            amazon/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
