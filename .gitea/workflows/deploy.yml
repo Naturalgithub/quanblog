@@ -62,8 +62,18 @@ jobs:
           aws_secret_access_key = 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD
           EOF
 
+          # 配置 AWS 设置 1
+          cat > ~/.aws/config << EOF
+          [default]
+          output = json
+          s3 =
+              addressing_style = path
+              payload_signing_enabled = true
+          EOF
+
           echo "AWS 凭证和配置文件内容..."
           cat ~/.aws/credentials
+          cat ~/.aws/config
 
           # 获取当前工作目录的绝对路径
           WORKSPACE_DIR=$(pwd)
@@ -72,6 +82,7 @@ jobs:
           # 确保构建目录存在
           echo "检查构建目录..."
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
+
 
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
