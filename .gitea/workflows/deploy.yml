@@ -89,7 +89,7 @@ jobs:
         run: |
           echo "清理资源..."
           docker rm -f vitepress-builder || true
-          rm -rf /github/workspace/docs/.vitepress/dist
+          rm -rf /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
 
       # 部署完成通知
       - name: 部署完成通知
