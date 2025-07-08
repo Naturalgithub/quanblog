@@ -13,8 +13,8 @@ jobs:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
         uses: actions/checkout@v4
-        # with:
-        #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
+        with:
+          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
       # 构建 Docker 镜像并运行
       - name: 构建并运行 Docker 镜像
