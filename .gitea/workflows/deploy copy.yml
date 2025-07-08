@@ -1,0 +1,71 @@
+name: 上传W3存储测试
+on:
+  push:
+    branches:
+      - main
+
+# 定义工作流阶段
+jobs:
+  build-and-deploy:
+    name: 构建并部署博客
+    runs-on: ubuntu-latest
+    steps:
+      # 检出代码 - 使用内置的检出操作，不依赖外部 actions
+      - name: 检出代码
+        uses: actions/checkout@v4:https://github.com/actions/checkout
+        with:
+          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
+
+      # 使用 Docker 运行 AWS CLI
+      - name: 使用 Docker 运行 AWS CLI
+        run: |
+          echo "拉取 AWS CLI Docker 镜像..."
+          # 拉取 AWS CLI 官方 Docker 镜像
+          docker pull amazon/aws-cli || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
+
+          # 创建 AWS 配置目录
+          mkdir -p ~/.aws
+
+          # 配置 AWS 凭证
+          echo "配置 AWS 凭证..."
+          cat > ~/.aws/credentials << EOF
+          [default]
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          EOF
+
+          # 打印 AWS 凭证和配置文件内容
+          echo "AWS 凭证和配置文件内容..."
+          cat ~/.aws/credentials
+
+          # 获取当前工作目录的绝对路径
+          WORKSPACE_DIR=$(pwd)
+          echo "当前工作目录: $WORKSPACE_DIR"
+
+          # 确保构建目录存在
+          echo "检查构建目录..."
+          ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
+
+          # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
+          echo "上传到 W3 存储..."
+           docker run --rm \
+            -v ~/.aws:/root/.aws \
+            amazon/aws-cli s3 cp /.aws s3://115-web/blog/ \
+            --recursive \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
+
+      # 清理资源
+      # - name: 清理资源
+      #   if: always() # 无论前面步骤成功或失败，都执行清理
+      #   run: |
+      #     echo "清理资源..."
+      #     rm -rf $WORKSPACE_DIR/docs/.vitepress/dist
+
+      # 部署完成通知
+      - name: 部署完成通知
+        if: success() # 仅在成功时显示
+        run: |
+          echo "✅ 博客已成功部署到 W3 存储！"
+          echo "📊 部署时间: $(date)"
+          echo "🌐 访问地址: http://home.yuanquanke.cn:35246/115-web/blog/index.html"
