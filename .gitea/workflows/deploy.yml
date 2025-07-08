@@ -58,8 +58,8 @@ jobs:
           echo "配置 AWS 凭证..."
           cat > ~/.aws/credentials << EOF
           [default]
-          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_access_key_id = P1hdiJSfyZsssnZ4wCSF
+          aws_secret_access_key = 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD
           EOF
 
           # 配置 AWS 设置
