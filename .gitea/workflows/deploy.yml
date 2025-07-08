@@ -36,7 +36,7 @@ jobs:
             -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/app/docs/.vitepress/dist \
             vitepress-blog
 
-          # 检查构建结果
+          # 检查构建结果 1
           echo "检查构建结果..."
           ls -la /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist || echo "构建目录不存在"
 
