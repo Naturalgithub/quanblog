@@ -73,18 +73,26 @@ jobs:
               payload_signing_enabled = true
           EOF
 
+          # 获取当前工作目录的绝对路径
+          WORKSPACE_DIR=$(pwd)
+          echo "当前工作目录: $WORKSPACE_DIR"
+
+          # 确保构建目录存在
+          echo "检查构建目录..."
+          ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
+
           # 使用 Docker 运行 AWS CLI 上传文件
           echo "上传到 W3 存储..."
           docker run --rm \
             -v ~/.aws:/root/.aws \
-            -v docs/.vitepress/dist:/aws/dist \
+            -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
             public.ecr.aws/aws-cli/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246 || \
           docker run --rm \
             -v ~/.aws:/root/.aws \
-            -v docs/.vitepress/dist:/aws/dist \
+            -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
             amazon/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
@@ -95,7 +103,7 @@ jobs:
         if: always() # 无论前面步骤成功或失败，都执行清理
         run: |
           echo "清理资源..."
-          rm -rf docs/.vitepress/dist
+          rm -rf $WORKSPACE_DIR/docs/.vitepress/dist
 
       # 部署完成通知
       - name: 部署完成通知
