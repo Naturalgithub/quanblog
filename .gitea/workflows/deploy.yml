@@ -58,8 +58,8 @@ jobs:
           echo "配置 AWS 凭证..."
           cat > ~/.aws/credentials << EOF
           [default]
-          aws_access_key_id = P1hdiJSfyZsssnZ4wCSF
-          aws_secret_access_key = 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           EOF
 
           # 配置 AWS 设置 1
@@ -89,7 +89,7 @@ jobs:
            docker run --rm \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-            amazon/aws-cli s3 cp /aws/dist s3://115-web/blog/ \
+            amazon/aws-cli s3 cp . s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
