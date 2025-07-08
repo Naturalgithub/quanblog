@@ -56,7 +56,6 @@ jobs:
             --debug \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
-
           # 验证上传结果
           echo "验证上传结果..."
           docker run --rm \
