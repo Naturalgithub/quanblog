@@ -70,9 +70,9 @@ jobs:
           echo "上传到S32"
           aws s3 cp docs/.vitepress/dist/ s3://nas-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
 
-      - name: 部署完成通知
+      - name: 部署完成通知1
         if: success()
         run: |
           echo "✅ 博客已成功部署到 W3 存储！"
           echo "📊 部署时间: $(date)"
-          echo "🌐 访问地址: http://home.yuanquanke.cn:35246/115-web/blog/index.html"
+          echo "🌐 访问地址: https://blog.yuanquanke.cn:8888/"
