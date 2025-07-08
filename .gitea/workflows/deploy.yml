@@ -79,9 +79,9 @@ jobs:
           echo "检查构建目录..."
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
 
-          # 使用 Docker 运行 AWS CLI 上传文件
+          # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
-          docker run --rm \
+           docker run --rm \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
             amazon/aws-cli s3 cp /aws/dist s3://115-web/blog/ \
