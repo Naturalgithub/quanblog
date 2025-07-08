@@ -12,36 +12,36 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
-        uses: actions/checkout@v4:https://github.com/actions/checkout
-        with:
-          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
+        uses: actions/checkout@v4
 
-      # 使用 Docker 运行 AWS CLI
-      - name: 使用 Docker 运行 AWS CLI
+      - name: 安装AWS CLI
         run: |
-          echo "拉取 AWS CLI Docker 镜像..."
-          docker pull amazon/aws-cli || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
-
-          mkdir -p ~/.aws
-
-          echo "配置 AWS 凭证..."
-          cat > ~/.aws/credentials << EOF
-          [default]
-          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          EOF
-
-          echo "AWS 凭证和配置文件内容..."
-          cat ~/.aws/credentials
-
-          echo "上传到 W3 存储..."
-
-          echo "验证上传结果..."
-          docker run --rm \
-            -v ~/.aws:/root/.aws \
-            amazon/aws-cli s3 cp ~/.aws s3://115-web/blog/ \
-            --recursive \
-            --endpoint-url http://home.yuanquanke.cn:35246
+          echo "看我表演变量：${{vars.ABC}}"
+          echo "安装AWS CLI..."
+          apt-get update && apt-get install -y curl unzip
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
+      - name: 配置AWS
+        run: |
+          echo "配置AWS凭证..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set output json
+          aws configure set default.s3.addressing_style path
+          aws configure set default.s3.payload_signing_enabled true
+      - name: 准备上传文件
+        run: |
+          echo "准备上传文件..."
+          mkdir -p docs/.vitepress/dist
+          echo "Hello World from Gitea Actions 看 2025 年 7 月 7 日 15:40:04" > docs/.vitepress/dist/index.html
+          cat docs/.vitepress/dist/index.html
+      - name: 上传到S3
+        run: |
+          echo "上传到S3"
+          aws s3 cp docs/.vitepress/dist/ s3://115-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
 
       # 清理资源
       # - name: 清理资源
