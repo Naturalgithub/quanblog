@@ -51,6 +51,30 @@ jobs:
           # 拉取 AWS CLI 官方 Docker 镜像
           docker pull amazon/aws-cli || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
 
+          # 创建 AWS 配置目录
+          mkdir -p ~/.aws
+
+          # 配置 AWS 凭证
+          echo "配置 AWS 凭证..."
+          cat > ~/.aws/credentials << EOF
+          [default]
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          EOF
+
+          # 配置 AWS 设置
+          cat > ~/.aws/config << EOF
+          [default]
+          output = json
+          s3 =
+              addressing_style = path
+              payload_signing_enabled = true
+          EOF
+
+          echo "AWS 凭证和配置文件内容..."
+          cat ~/.aws/credentials
+          cat ~/.aws/config
+
           # 获取当前工作目录的绝对路径
           WORKSPACE_DIR=$(pwd)
           echo "当前工作目录: $WORKSPACE_DIR"
@@ -62,11 +86,12 @@ jobs:
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
            docker run --rm \
-           -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-           amazon/aws-cli s3 cp /aws s3://115-web/blog/ \
-           --recursive \
-           --cache-control "max-age=3600" \
-           --endpoint-url http://home.yuanquanke.cn:35246
+            -v ~/.aws:/root/.aws \
+            -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
+            amazon/aws-cli s3 cp /aws/dist s3://115-web/blog/ \
+            --recursive \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
 
       # 清理资源
       - name: 清理资源
