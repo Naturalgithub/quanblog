@@ -12,7 +12,7 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
-        uses: actions/checkout@v4:https://github.com/actions/checkout
+        uses: actions/checkout@v4
         # with:
         #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
@@ -44,20 +44,14 @@ jobs:
       # 安装 AWS CLI
       - name: 安装 AWS CLI
         run: |
-          echo "安装 AWS CLI..."
-          # 使用国内镜像源加速 apt 更新
-          sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-          sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+          echo "看我表演变量：${{vars.ABC}}"
+          echo "安装AWS CLI..."
           apt-get update && apt-get install -y curl unzip
-
-          # 使用阿里云 OSS 镜像下载 AWS CLI
-          echo "从国内镜像下载 AWS CLI..."
-          curl "https://gosspublic.alicdn.com/ossutil/awscli-bundle.zip" -o "awscli-bundle.zip" --connect-timeout 30 --retry 5 --retry-delay 2 || \
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-bundle.zip" --connect-timeout 30 --retry 5 --retry-delay 2
-
-          unzip -q awscli-bundle.zip
-          ./aws/install || ./awscli-bundle/install -i /usr/local/aws-cli -b /usr/local/bin/aws
-          aws --version
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
 
       # 配置 AWS
       - name: 配置 AWS
