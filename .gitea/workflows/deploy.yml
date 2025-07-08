@@ -88,7 +88,6 @@ jobs:
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
-            --debug
 
       # 清理资源
       - name: 清理资源
