@@ -1,4 +1,4 @@
-name: 部署博客到S3
+name: 部署博客到W3存储
 on:
   push:
     branches:
@@ -21,8 +21,11 @@ jobs:
       # 安装必要的系统依赖
       - name: 安装系统依赖
         run: |
-          echo "安装 git 和其他必要的工具..."
-          apk update && apk add --no-cache git
+          echo "安装系统依赖..."
+          apk update && apk add --no-cache git python3 py3-pip curl wget
+          pip3 install awscli
+          aws --version
+
       # 安装 pnpm
       - name: 安装 pnpm
         run: |
@@ -30,50 +33,53 @@ jobs:
           pnpm config set registry https://registry.npmmirror.com
           pnpm --version
 
-      # 安装依赖
+      # 安装依赖（使用缓存提高构建速度）
       - name: 安装依赖
         run: |
           echo "安装项目依赖..."
           pnpm install
-          # 如果构建时间过长，可以手动安装 pagefind
+          # 安装 pagefind 用于站内搜索
           pnpm add pagefind -D
 
       # 构建博客
       - name: 构建博客
         run: |
+          echo "开始构建博客..."
           pnpm build
           echo "博客构建完成！"
           ls -la docs/.vitepress/dist
 
-      # 安装 AWS CLI
-      - name: 安装 AWS CLI
+      # 配置上传脚本
+      - name: 准备上传脚本
         run: |
-          echo "安装 AWS CLI..."
-          # Alpine环境下安装AWS CLI
-          apk update && apk add --no-cache python3 py3-pip curl
-          pip3 install awscli
-          aws --version || echo "AWS CLI未找到 1"
-
-      - name: 配置 AWS
+          echo "准备上传脚本..."
+          chmod +x ./upload-to-w3.sh
+          
+      # 配置 AWS 并部署
+      - name: 配置 AWS 并部署
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DIST_DIR: /github/workspace/docs/.vitepress/dist
+          S3_BUCKET: 115-web
+          S3_PREFIX: blog/
+          S3_ENDPOINT: http://home.yuanquanke.cn:35246
         run: |
-          echo "配置 AWS 凭证..."
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set output json
+          echo "配置 AWS 凭证并开始部署..."
+          # 配置 AWS CLI
           aws configure set default.s3.addressing_style path
           aws configure set default.s3.payload_signing_enabled true
-
-      - name: 部署到 S3
-        run: |
-          echo "正在部署博客到 S31..."
-          # 使用 --delete 参数删除目标位置上已经不存在于源位置的文件
-          # 使用 --cache-control 参数设置缓存控制
-          aws s3 sync docs/.vitepress/dist/ s3://115-web/blog/ \
+          
+          # 执行上传
+          echo "正在部署博客到 W3 存储..."
+          aws s3 sync "$DIST_DIR/" "s3://$S3_BUCKET/$S3_PREFIX" \
             --delete \
             --cache-control "max-age=3600" \
-            --endpoint-url http://home.yuanquanke.cn:35246
+            --endpoint-url "$S3_ENDPOINT"
 
+      # 部署完成通知
       - name: 部署完成通知
         run: |
-          echo "博客已成功部署到 S3！"
-          echo "访问地址: http://home.yuanquanke.cn:35246/115-web/blog/index.html"
+          echo "✅ 博客已成功部署到 W3 存储！"
+          echo "📊 部署时间: $(date)"
+          echo "🌐 访问地址: http://home.yuanquanke.cn:35246/115-web/blog/index.html"
