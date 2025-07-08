@@ -9,73 +9,47 @@ jobs:
   build-and-deploy:
     name: 构建并部署博客
     runs-on: ubuntu-latest
-    # 使用 Docker 容器
-    container:
-      image: node:22-alpine
-      options: --user root
     steps:
       # 检出代码
       - name: 检出代码
         uses: actions/checkout@v4
 
-      # 安装必要的系统依赖
-      - name: 安装系统依赖
+      - name: 设置 Docker 环境 构建 并输出 dist 目录给下个流水线
         run: |
-          echo "安装系统依赖..."
-          apk update && apk add --no-cache git python3 py3-pip curl wget
-          pip3 install awscli
-          aws --version
+          echo "设置 Docker 环境 构建 并输出 dist 目录给下个流水线..."
+          docker build -t vitepress-blog .
+          docker run -v /github/workspace/docs/.vitepress/dist:/app/docs/.vitepress/dist vitepress-blog
+          ls -la /github/workspace/docs/.vitepress/dist
 
-      # 安装 pnpm
-      - name: 安装 pnpm
+      - name: 安装AWS CLI
         run: |
-          npm install -g pnpm@latest --registry=https://registry.npmmirror.com
-          pnpm config set registry https://registry.npmmirror.com
-          pnpm --version
+          echo "安装AWS CLI..."
+          apt-get update && apt-get install -y curl unzip
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
 
-      # 安装依赖（使用缓存提高构建速度）
-      - name: 安装依赖
+      - name: 配置AWS
         run: |
-          echo "安装项目依赖..."
-          pnpm install
-          # 安装 pagefind 用于站内搜索
-          pnpm add pagefind -D
-
-      # 构建博客
-      - name: 构建博客
-        run: |
-          echo "开始构建博客..."
-          pnpm build
-          echo "博客构建完成！"
-          ls -la docs/.vitepress/dist
-
-      # 配置上传脚本
-      - name: 准备上传脚本
-        run: |
-          echo "准备上传脚本..."
-          chmod +x ./upload-to-w3.sh
-          
-      # 配置 AWS 并部署
-      - name: 配置 AWS 并部署
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DIST_DIR: /github/workspace/docs/.vitepress/dist
-          S3_BUCKET: 115-web
-          S3_PREFIX: blog/
-          S3_ENDPOINT: http://home.yuanquanke.cn:35246
-        run: |
-          echo "配置 AWS 凭证并开始部署..."
-          # 配置 AWS CLI
+          echo "配置AWS凭证..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set output json
           aws configure set default.s3.addressing_style path
           aws configure set default.s3.payload_signing_enabled true
-          
-          # 执行上传
-          echo "正在部署博客到 W3 存储..."
-          aws s3 sync "$DIST_DIR/" "s3://$S3_BUCKET/$S3_PREFIX" \
-            --delete \
-            --cache-control "max-age=3600" \
-            --endpoint-url "$S3_ENDPOINT"
+
+      - name: 上传到S3
+        run: |
+          echo "上传到S3"
+          aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
+
+      # 删除构建容器
+      - name: 删除构建容器
+        run: |
+          echo "删除构建容器..."
+          docker rm -f vitepress-blog
 
       # 部署完成通知
       - name: 部署完成通知

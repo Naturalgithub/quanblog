@@ -29,13 +29,3 @@ COPY . .
 
 # 构建应用
 RUN pnpm build
-
-# 添加上传脚本
-COPY upload-to-w3.sh /app/upload-to-w3.sh
-RUN chmod +x /app/upload-to-w3.sh
-
-# 设置环境变量
-ENV DIST_DIR=/app/docs/.vitepress/dist
-ENV S3_BUCKET=115-web
-ENV S3_PREFIX=blog/
-ENV S3_ENDPOINT=http://home.yuanquanke.cn:35246
