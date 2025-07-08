@@ -47,12 +47,21 @@ jobs:
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
 
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
+          # 使用 Docker 运行 AWS CLI 上传文件
           echo "上传到 W3 存储..."
-           docker run --rm \
+          docker run --rm \
             -v ~/.aws:/root/.aws \
             amazon/aws-cli s3 cp ~/.aws s3://115-web/blog/ \
             --recursive \
+            --debug \
             --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
+
+          # 验证上传结果
+          echo "验证上传结果..."
+          docker run --rm \
+            -v ~/.aws:/root/.aws \
+            amazon/aws-cli s3 ls s3://115-web/blog/ \
             --endpoint-url http://home.yuanquanke.cn:35246
 
       # 清理资源
