@@ -88,7 +88,6 @@ jobs:
           echo "检查构建目录..."
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
 
-
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
            docker run --rm \
