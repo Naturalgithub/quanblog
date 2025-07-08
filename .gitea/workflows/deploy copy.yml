@@ -34,9 +34,6 @@ jobs:
           echo "AWS 凭证和配置文件内容..."
           cat ~/.aws/credentials
 
-          WORKSPACE_DIR=$(pwd)
-          echo "当前工作目录: $WORKSPACE_DIR"
-
           echo "上传到 W3 存储..."
 
           echo "验证上传结果..."
