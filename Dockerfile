@@ -6,12 +6,7 @@ WORKDIR /app
 
 # 安装系统依赖和 AWS CLI
 RUN apk update && apk add --no-cache \
-    git \
-    python3 \
-    py3-pip \
-    curl \
-    wget \
-    && pip3 install awscli
+    git 
 
 # 安装 pnpm
 RUN npm install -g pnpm@latest --registry=https://registry.npmmirror.com && \
