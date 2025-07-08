@@ -83,11 +83,14 @@ jobs:
           echo "检查构建目录..."
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
 
+
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
            docker run --rm \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
+             aws configure set aws_access_key_id P1hdiJSfyZsssnZ4wCSF \
+             aws configure set aws_secret_access_key 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD \
             amazon/aws-cli s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
