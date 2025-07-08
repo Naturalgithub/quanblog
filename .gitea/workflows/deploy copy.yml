@@ -50,7 +50,7 @@ jobs:
           echo "上传到 W3 存储..."
            docker run --rm \
             -v ~/.aws:/root/.aws \
-            amazon/aws-cli s3 cp /.aws s3://115-web/blog/ \
+            amazon/aws-cli s3 cp ~/.aws s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
