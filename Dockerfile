@@ -4,7 +4,7 @@ FROM node:22-alpine
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖
+# 安装系统依赖1
 RUN apk update && apk add --no-cache git
 
 # 安装 pnpm

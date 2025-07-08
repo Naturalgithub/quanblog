@@ -10,49 +10,72 @@ jobs:
     name: 构建并部署博客
     runs-on: ubuntu-latest
     steps:
-      # 检出代码
+      # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
-      - name: 设置 Docker 环境 构建 并输出 dist 目录给下个流水线
+      # 构建 Docker 镜像并运行
+      - name: 构建并运行 Docker 镜像
         run: |
-          echo "设置 Docker 环境 构建 并输出 dist 目录给下个流水线..."
+          echo "构建 Docker 镜像..."
+          # 确保 Dockerfile 中已添加 git 和 openssh
           docker build -t vitepress-blog .
-          docker run -v /github/workspace/docs/.vitepress/dist:/app/docs/.vitepress/dist vitepress-blog
-          ls -la /github/workspace/docs/.vitepress/dist
 
-      - name: 安装AWS CLI
+          # 创建目录以确保挂载点存在
+          mkdir -p /github/workspace/docs/.vitepress/dist
+
+          # 运行容器并挂载卷
+          echo "运行容器并构建博客..."
+          docker run --name vitepress-builder \
+            -v /github/workspace:/github/workspace \
+            -v /github/workspace/docs/.vitepress/dist:/app/docs/.vitepress/dist \
+            vitepress-blog
+
+          # 检查构建结果
+          echo "检查构建结果..."
+          ls -la /github/workspace/docs/.vitepress/dist || echo "构建目录不存在"
+
+      # 安装 AWS CLI
+      - name: 安装 AWS CLI
         run: |
-          echo "安装AWS CLI..."
+          echo "安装 AWS CLI..."
           apt-get update && apt-get install -y curl unzip
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
-          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
-          ./aws/install || echo "安装失败，但继续执行"
-          rm -rf awscliv2.zip aws
-          which aws || echo "AWS CLI未找到"
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 5 --retry-delay 2
+          unzip -q awscliv2.zip
+          ./aws/install
+          aws --version
 
-      - name: 配置AWS
+      # 配置 AWS
+      - name: 配置 AWS
         run: |
-          echo "配置AWS凭证..."
+          echo "配置 AWS 凭证..."
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set output json
           aws configure set default.s3.addressing_style path
           aws configure set default.s3.payload_signing_enabled true
 
-      - name: 上传到S3
+      # 上传到 S3
+      - name: 上传到 W3 存储
         run: |
-          echo "上传到S3"
-          aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
+          echo "上传到 W3 存储..."
+          aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ \
+            --recursive \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
 
-      # 删除构建容器
-      - name: 删除构建容器
+      # 清理资源
+      - name: 清理资源
+        if: always() # 无论前面步骤成功或失败，都执行清理
         run: |
-          echo "删除构建容器..."
-          docker rm -f vitepress-blog
+          echo "清理资源..."
+          docker rm -f vitepress-builder || true
 
       # 部署完成通知
       - name: 部署完成通知
+        if: success() # 仅在成功时显示
         run: |
           echo "✅ 博客已成功部署到 W3 存储！"
           echo "📊 部署时间: $(date)"
