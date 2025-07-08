@@ -46,27 +46,40 @@ jobs:
         run: |
           echo "安装AWS CLI..."
           apt-get update && apt-get install -y curl unzip
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
-          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
-          ./aws/install || echo "安装失败，但继续执行"
+
+          # 尝试从国内镜像下载，如果失败则使用官方源
+          echo "下载 AWS CLI 安装包..."
+          curl "https://mirrors.huaweicloud.com/aws-cli/2.15.0/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 10 --retry 2 --retry-delay 2 || \
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 --retry-delay 2
+
+          # 解压并安装
+          echo "解压 AWS CLI 安装包..."
+          unzip -q awscliv2.zip
+          echo "安装 AWS CLI..."
+          ./aws/install
+
+          # 清理安装文件
           rm -rf awscliv2.zip aws
-          which aws || echo "AWS CLI未找到"
+
+          # 验证安装
+          echo "验证 AWS CLI 安装..."
+          /usr/local/bin/aws --version || echo "AWS CLI 安装失败，但继续执行"
 
       # 配置 AWS
       - name: 配置 AWS
         run: |
           echo "配置 AWS 凭证..."
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set output json
-          aws configure set default.s3.addressing_style path
-          aws configure set default.s3.payload_signing_enabled true
+          /usr/local/bin/aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          /usr/local/bin/aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          /usr/local/bin/aws configure set output json
+          /usr/local/bin/aws configure set default.s3.addressing_style path
+          /usr/local/bin/aws configure set default.s3.payload_signing_enabled true
 
       # 上传到 S3
       - name: 上传到 W3 存储
         run: |
           echo "上传到 W3 存储..."
-          aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ \
+          /usr/local/bin/aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
