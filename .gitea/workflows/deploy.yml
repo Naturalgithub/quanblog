@@ -62,18 +62,8 @@ jobs:
           aws_secret_access_key = 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD
           EOF
 
-          # 配置 AWS 设置 1
-          cat > ~/.aws/config << EOF
-          [default]
-          output = json
-          s3 =
-              addressing_style = path
-              payload_signing_enabled = true
-          EOF
-
           echo "AWS 凭证和配置文件内容..."
           cat ~/.aws/credentials
-          cat ~/.aws/config
 
           # 获取当前工作目录的绝对路径
           WORKSPACE_DIR=$(pwd)
