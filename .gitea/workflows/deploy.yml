@@ -49,9 +49,7 @@ jobs:
         run: |
           echo "拉取 AWS CLI Docker 镜像..."
           # 拉取 AWS CLI 官方 Docker 镜像
-          docker pull public.ecr.aws/aws-cli/aws-cli:latest || \
-          docker pull amazon/aws-cli:latest || \
-          echo "AWS CLI Docker 镜像拉取失败，但继续执行"
+          docker pull public.ecr.aws/aws-cli/aws-cli:latest || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
 
           # 创建 AWS 配置目录
           mkdir -p ~/.aws
@@ -86,14 +84,7 @@ jobs:
           docker run --rm \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-            public.ecr.aws/aws-cli/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
-            --recursive \
-            --cache-control "max-age=3600" \
-            --endpoint-url http://home.yuanquanke.cn:35246 || \
-          docker run --rm \
-            -v ~/.aws:/root/.aws \
-            -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-            amazon/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
+            public.ecr.aws/aws-cli/aws-cli:latest s3 cp . s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
