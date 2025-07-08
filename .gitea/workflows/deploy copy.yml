@@ -20,13 +20,10 @@ jobs:
       - name: 使用 Docker 运行 AWS CLI
         run: |
           echo "拉取 AWS CLI Docker 镜像..."
-          # 拉取 AWS CLI 官方 Docker 镜像
           docker pull amazon/aws-cli || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
 
-          # 创建 AWS 配置目录
           mkdir -p ~/.aws
 
-          # 配置 AWS 凭证
           echo "配置 AWS 凭证..."
           cat > ~/.aws/credentials << EOF
           [default]
@@ -34,20 +31,12 @@ jobs:
           aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           EOF
 
-          # 打印 AWS 凭证和配置文件内容
           echo "AWS 凭证和配置文件内容..."
           cat ~/.aws/credentials
 
-          # 获取当前工作目录的绝对路径
           WORKSPACE_DIR=$(pwd)
           echo "当前工作目录: $WORKSPACE_DIR"
 
-          # 确保构建目录存在
-          echo "检查构建目录..."
-          # ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
-
-          # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
-          # 使用 Docker 运行 AWS CLI 上传文件
           echo "上传到 W3 存储..."
 
           echo "验证上传结果..."
