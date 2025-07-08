@@ -62,7 +62,7 @@ jobs:
           aws_secret_access_key = 8gvqEx4W1IimlcWfAlZK1bDqXkN7TufTfpwL0grD
           EOF
 
-          # 配置 AWS 设置
+          # 配置 AWS 设置 1
           cat > ~/.aws/config << EOF
           [default]
           output = json
