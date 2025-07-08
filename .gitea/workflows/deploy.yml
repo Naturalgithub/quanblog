@@ -24,7 +24,7 @@ jobs:
           docker build -t vitepress-blog .
 
           # 创建目录以确保挂载点存在
-          mkdir -p /github/workspace/docs/.vitepress/dist
+          mkdir -p /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
 
           # 清理可能存在的旧容器
           echo "清理可能存在的旧容器..."
@@ -33,13 +33,12 @@ jobs:
           # 运行容器并挂载卷
           echo "运行容器并构建博客..."
           docker run --name vitepress-builder \
-            -v /github/workspace:/github/workspace \
-            -v /github/workspace/docs/.vitepress/dist:/app/docs/.vitepress/dist \
+            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/app/docs/.vitepress/dist \
             vitepress-blog
 
           # 检查构建结果
           echo "检查构建结果..."
-          ls -la /github/workspace/docs/.vitepress/dist || echo "构建目录不存在"
+          ls -la /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist || echo "构建目录不存在"
 
       # 安装 AWS CLI
       - name: 安装AWS CLI
@@ -79,7 +78,7 @@ jobs:
       - name: 上传到 W3 存储
         run: |
           echo "上传到 W3 存储..."
-          /usr/local/bin/aws s3 cp /github/workspace/docs/.vitepress/dist s3://115-web/blog/ \
+          /usr/local/bin/aws s3 cp /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
