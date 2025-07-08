@@ -4,9 +4,8 @@ FROM node:22-alpine
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖和 AWS CLI
-# RUN apk update && apk add --no-cache \
-#     git 
+# 安装系统依赖
+RUN apk update && apk add --no-cache git
 
 # 安装 pnpm
 RUN npm install -g pnpm@latest --registry=https://registry.npmmirror.com && \
