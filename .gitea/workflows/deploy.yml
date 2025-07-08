@@ -70,13 +70,6 @@ jobs:
           echo "上传到S3"
           aws s3 cp docs/.vitepress/dist/ s3://115-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
 
-      # 清理资源
-      # - name: 清理资源
-      #   if: always() # 无论前面步骤成功或失败，都执行清理
-      #   run: |
-      #     echo "清理资源..."
-      #     rm -rf $WORKSPACE_DIR/docs/.vitepress/dist
-
       # 部署完成通知
       - name: 部署完成通知
         if: success() # 仅在成功时显示
