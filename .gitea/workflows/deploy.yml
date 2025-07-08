@@ -79,15 +79,30 @@ jobs:
           echo "检查构建目录..."
           ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
 
+          # 显示构建目录内容
+          echo "构建目录内容:"
+          find $WORKSPACE_DIR/docs/.vitepress/dist -type f | head -n 10
+          echo "构建目录文件总数:"
+          find $WORKSPACE_DIR/docs/.vitepress/dist -type f | wc -l
+
           # 使用 Docker 运行 AWS CLI 上传文件
           echo "上传到 W3 存储..."
+          # 添加 --debug 参数获取详细日志
           docker run --rm \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-            public.ecr.aws/aws-cli/aws-cli:latest s3 cp . s3://115-web/blog/ \
+            public.ecr.aws/aws-cli/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
-            --endpoint-url http://home.yuanquanke.cn:35246
+            --endpoint-url http://home.yuanquanke.cn:35246 \
+            --debug
+
+          # 检查上传结果
+          echo "检查上传结果..."
+          docker run --rm \
+            -v ~/.aws:/root/.aws \
+            public.ecr.aws/aws-cli/aws-cli:latest s3 ls s3://115-web/blog/ \
+            --endpoint-url http://home.yuanquanke.cn:35246 || echo "无法列出 S3 存储桶内容"
 
       # 清理资源
       - name: 清理资源
