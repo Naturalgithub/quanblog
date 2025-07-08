@@ -26,6 +26,10 @@ jobs:
           # 创建目录以确保挂载点存在
           mkdir -p /github/workspace/docs/.vitepress/dist
 
+          # 清理可能存在的旧容器
+          echo "清理可能存在的旧容器..."
+          docker rm -f vitepress-builder || true
+
           # 运行容器并挂载卷
           echo "运行容器并构建博客..."
           docker run --name vitepress-builder \
