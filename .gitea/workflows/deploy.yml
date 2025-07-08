@@ -68,7 +68,7 @@ jobs:
       - name: 上传到S3
         run: |
           echo "上传到S32"
-          aws s3 cp docs/.vitepress/dist/ s3://115-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
+          aws s3 cp docs/.vitepress/dist/ s3://nas-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
 
       - name: 部署完成通知
         if: success()
