@@ -33,7 +33,7 @@ jobs:
           # 运行容器并挂载卷
           echo "运行容器并构建博客..."
           docker run --name vitepress-builder \
-            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/app/docs/.vitepress/dist \
+            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/docs/.vitepress/dist \
             vitepress-blog
 
           # 检查构建结果 1
@@ -92,6 +92,7 @@ jobs:
         run: |
           echo "清理资源..."
           docker rm -f vitepress-builder || true
+          rm -rf /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
 
       # 部署完成通知
       - name: 部署完成通知
