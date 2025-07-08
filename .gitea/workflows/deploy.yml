@@ -84,7 +84,7 @@ jobs:
             --endpoint-url http://home.yuanquanke.cn:35246 || \
           docker run --rm \
             -v ~/.aws:/root/.aws \
-            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/aws/dist \
+            -v docs/.vitepress/dist:/aws/dist \
             amazon/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
@@ -95,7 +95,7 @@ jobs:
         if: always() # 无论前面步骤成功或失败，都执行清理
         run: |
           echo "清理资源..."
-          rm -rf /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
+          rm -rf docs/.vitepress/dist
 
       # 部署完成通知
       - name: 部署完成通知
