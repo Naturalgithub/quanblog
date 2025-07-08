@@ -4,8 +4,11 @@ FROM node:22-alpine
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖1
-RUN apk update && apk add --no-cache git
+# 替换为国内 Alpine 镜像源
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+
+# 安装系统依赖
+RUN apk update && apk add --no-cache git openssh
 
 # 安装 pnpm
 RUN npm install -g pnpm@latest --registry=https://registry.npmmirror.com && \
