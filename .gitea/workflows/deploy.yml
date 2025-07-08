@@ -52,7 +52,7 @@ jobs:
           # Alpine环境下安装AWS CLI
           apk update && apk add --no-cache python3 py3-pip curl
           pip3 install awscli
-          aws --version || echo "AWS CLI未找到"
+          aws --version || echo "AWS CLI未找到 1"
 
       - name: 配置 AWS
         run: |
