@@ -44,30 +44,16 @@ jobs:
           echo "检查构建结果..."
           ls -la docs/.vitepress/dist || echo "构建目录不存在"
 
-      - name: 安装AWS CLI
-        run: |
-          echo "安装AWS CLI..."
-          apt-get update && apt-get install -y curl unzip
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
-          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
-          ./aws/install || echo "安装失败，但继续执行"
-          rm -rf awscliv2.zip aws
-          which aws || echo "AWS CLI未找到"
-
-      - name: 配置AWS
-        run: |
-          echo "配置AWS凭证..."
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set output json
-          aws configure set default.s3.addressing_style path
-          aws configure set default.s3.payload_signing_enabled true
-
       - name: 上传到W3存储
         run: |
-          echo "上传到W3存储..."
-          aws s3 sync docs/.vitepress/dist s3://115-web/blog/ --recursive --cache-control "max-age=3600" --endpoint-url http://home.yuanquanke.cn:35246
-
+          docker run --rm \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -v "$(pwd)/docs/.vitepress/dist/:/aws/dist/" \
+            amazon/aws-cli s3 sync /aws/dist/ s3://115-web/blog/ \
+            --recursive \
+            --cache-control "max-age=3600" \
+            --endpoint-url http://home.yuanquanke.cn:35246
       # 清理资源
       # - name: 清理资源
       #   if: always() # 无论前面步骤成功或失败，都执行清理
