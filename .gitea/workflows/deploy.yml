@@ -44,57 +44,29 @@ jobs:
           echo "检查构建结果..."
           ls -la docs/.vitepress/dist || echo "构建目录不存在"
 
-      # 使用 Docker 运行 AWS CLI
-      - name: 使用 Docker 运行 AWS CLI
+      - name: 安装AWS CLI
         run: |
-          echo "拉取 AWS CLI Docker 镜像..."
-          # 拉取 AWS CLI 官方 Docker 镜像
-          docker pull amazon/aws-cli || echo "AWS CLI Docker 镜像拉取失败，但继续执行"
+          echo "安装AWS CLI..."
+          apt-get update && apt-get install -y curl unzip
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
 
-          # 创建 AWS 配置目录
-          mkdir -p ~/.aws
+      - name: 配置AWS
+        run: |
+          echo "配置AWS凭证..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set output json
+          aws configure set default.s3.addressing_style path
+          aws configure set default.s3.payload_signing_enabled true
 
-          # 配置 AWS 凭证
-          echo "配置 AWS 凭证..."
-          cat > ~/.aws/credentials << EOF
-          [default]
-          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          EOF
-
-          # 配置 AWS 设置 1
-          cat > ~/.aws/config << EOF
-          [default]
-          output = json
-          s3 =
-              addressing_style = path
-              payload_signing_enabled = true
-          EOF
-
-          echo "AWS 凭证和配置文件内容..."
-          cat ~/.aws/credentials
-          cat ~/.aws/config
-
-          # 获取当前工作目录的绝对路径
-          WORKSPACE_DIR=$(pwd)
-          echo "当前工作目录: $WORKSPACE_DIR"
-
-          # 确保构建目录存在
-          echo "检查构建目录..."
-          ls -la $WORKSPACE_DIR/docs/.vitepress/dist || echo "构建目录不存在"
-
-
-          # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
-          echo "上传到 W3 存储..."
-           docker run --rm \
-           --name aws-cli \
-            -v ~/.aws:/root/.aws \
-            -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
-            amazon/aws-cli s3 cp . s3://115-web/blog/ \
-            --recursive \
-            --cache-control "max-age=3600" \
-            --endpoint-url http://home.yuanquanke.cn:35246
-          docker logs aws-cli
+      - name: 上传到W3存储
+        run: |
+          echo "上传到W3存储..."
+          aws s3 sync docs/.vitepress/dist s3://115-web/blog/ --recursive --cache-control "max-age=3600" --endpoint-url http://home.yuanquanke.cn:35246
 
       # 清理资源
       # - name: 清理资源
