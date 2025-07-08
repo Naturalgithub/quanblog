@@ -16,29 +16,33 @@ jobs:
         with:
           fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
-      # 构建 Docker 镜像并运行
-      - name: 构建并运行 Docker 镜像
+      # 设置 Node.js 环境
+      - name: 设置 Node.js 环境
         run: |
-          echo "构建 Docker 镜像..."
-          # 确保 Dockerfile 中已添加 git 和 openssh
-          docker build -t vitepress-blog .
+          echo "设置 Node.js 环境..."
+          # 检查 Node.js 版本
+          node --version
+          npm --version
 
-          # 创建目录以确保挂载点存在
-          mkdir -p /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
+          # 安装 pnpm
+          echo "安装 pnpm..."
+          npm install -g pnpm
+          pnpm --version
 
-          # 清理可能存在的旧容器
-          echo "清理可能存在的旧容器..."
-          docker rm -f vitepress-builder || true
+      # 安装依赖并构建
+      - name: 安装依赖并构建
+        run: |
+          echo "安装项目依赖..."
+          # 使用国内镜像源加速安装
+          pnpm config set registry https://registry.npmmirror.com
+          pnpm install
 
-          # 运行容器并挂载卷
-          echo "运行容器并构建博客..."
-          docker run --name vitepress-builder \
-            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/docs/.vitepress/dist \
-            vitepress-blog
+          echo "构建博客..."
+          pnpm build
 
-          # 检查构建结果 1
+          # 检查构建结果
           echo "检查构建结果..."
-          ls -la /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist || echo "构建目录不存在"
+          ls -la docs/.vitepress/dist || echo "构建目录不存在"
 
       # 使用 Docker 运行 AWS CLI
       - name: 使用 Docker 运行 AWS CLI
@@ -73,7 +77,7 @@ jobs:
           echo "上传到 W3 存储..."
           docker run --rm \
             -v ~/.aws:/root/.aws \
-            -v /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist:/aws/dist \
+            -v docs/.vitepress/dist:/aws/dist \
             public.ecr.aws/aws-cli/aws-cli:latest s3 cp /aws/dist s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
@@ -91,7 +95,6 @@ jobs:
         if: always() # 无论前面步骤成功或失败，都执行清理
         run: |
           echo "清理资源..."
-          docker rm -f vitepress-builder || true
           rm -rf /share/CACHEDEV1_DATA/Container/gitea/deploy/blog/dist
 
       # 部署完成通知
