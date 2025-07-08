@@ -87,12 +87,14 @@ jobs:
           # 使用 Docker 运行 AWS CLI 上传文件 志实时输出到控制台
           echo "上传到 W3 存储..."
            docker run --rm \
+           --name aws-cli \
             -v ~/.aws:/root/.aws \
             -v $WORKSPACE_DIR/docs/.vitepress/dist:/aws/dist \
             amazon/aws-cli s3 cp . s3://115-web/blog/ \
             --recursive \
             --cache-control "max-age=3600" \
             --endpoint-url http://home.yuanquanke.cn:35246
+          docker logs aws-cli
 
       # 清理资源
       # - name: 清理资源
