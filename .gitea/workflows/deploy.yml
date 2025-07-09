@@ -37,12 +37,12 @@ jobs:
       - name: 安装依赖并构建
         run: |
           echo "安装项目依赖..."
-          # 使用国内镜像源加速安装
-          pnpm config set registry https://registry.npmmirror.com
-          pnpm install
+          # 使用 --no-frozen-lockfile 允许更新锁文件，解决镜像源变更问题
+          pnpm install --no-frozen-lockfile
 
           echo "构建博客..."
-          pnpm build
+          # 修改为正确的构建命令
+          pnpm run build
 
           # 检查构建结果
           echo "检查构建结果..."
