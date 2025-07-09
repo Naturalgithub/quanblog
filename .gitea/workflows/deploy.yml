@@ -13,8 +13,8 @@ jobs:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
         uses: actions/checkout@v4:https://github.com/actions/checkout
-        with:
-          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
+        # with:
+        #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
       # 设置 Node.js 环境
       - name: 设置 Node.js 环境
@@ -47,9 +47,10 @@ jobs:
       - name: 部署 nginx
         run: |
           echo "部署 nginx docker..."
+          docker pull nginx:alpine
           docker stop blog-web || true
           docker rmi blog-web || true
-          docker run -d -p 17779:80 --name blog-web nginx
+          docker run -d -p 17779:80 --name blog-web nginx:alpine
           docker cp docs/.vitepress/dist blog-web:/usr/share/nginx/html
           docker exec blog-web nginx -s reload
 
