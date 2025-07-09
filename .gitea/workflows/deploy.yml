@@ -47,16 +47,15 @@ jobs:
       - name: 部署 nginx
         run: |
           echo "部署 nginx docker..."
-          docker pull nginx:alpine
           docker stop blog-web || true
           docker rmi blog-web || true
           docker run -d -p 17779:80 --name blog-web nginx:alpine
-          docker cp docs/.vitepress/dist blog-web:/usr/share/nginx/html
+          docker cp -rf docs/.vitepress/dist/* blog-web:/usr/share/nginx/html 
           docker exec blog-web nginx -s reload
 
       - name: 部署完成通知
         if: success()
         run: |
-          echo "✅ 博客已成功部署到 W3 存储！"
+          echo "✅ 博客已成功部署到内网服务器！"
           echo "📊 部署时间: $(date)"
-          echo "🌐 访问地址: https://blog.yuanquanke.cn:8888/"
+          echo "🌐 访问地址: https://192.168.1.102:17779/"
