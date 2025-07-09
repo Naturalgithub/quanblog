@@ -118,7 +118,7 @@ jobs:
 
           deploy_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-          message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
+          message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888) \n▪️ [流水线地址](https://gitea.home.yuanquanke.cn:8888/yuanquanke/quange-blog/actions)"
 
           token = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
           chat_id = "5679555666"
