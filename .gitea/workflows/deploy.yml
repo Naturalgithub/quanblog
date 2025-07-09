@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "部署 nginx docker..."
           # 确保先移除旧容器，无论其状态如何
-          docker rmia -f blog-web || true
+          docker rmab -f blog-web || true
           # 拉取最新的nginx镜像
           docker pull nginx:alpine
           # 创建新容器
@@ -111,36 +111,36 @@ jobs:
           echo "🌐 访问地址: https://blog.yuanquanke.cn:8888/"
           message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
           python3 -c '
-            import urllib.request
-            import urllib.parse
-            import json
-            import os
-            import datetime
+          import urllib.request
+          import urllib.parse
+          import json
+          import os
+          import datetime
 
-            deploy_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+          deploy_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
+          message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
 
-            token = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
-            chat_id = "5679555666"
-            url = "https://proxy.yuanquanke.cn/https/api.telegram.org/bot" + token + "/sendMessage"
+          token = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          chat_id = "5679555666"
+          url = "https://proxy.yuanquanke.cn/https/api.telegram.org/bot" + token + "/sendMessage"
 
-            data = {
-                "chat_id": chat_id,
-                "text": message,
-                "parse_mode": "Markdown"
-            }
-            encoded_data = json.dumps(data).encode("utf-8")
+          data = {
+              "chat_id": chat_id,
+              "text": message,
+              "parse_mode": "Markdown"
+          }
+          encoded_data = json.dumps(data).encode("utf-8")
 
-            try:
-                req = urllib.request.Request(url, data=encoded_data, method="POST")
-                req.add_header("Content-Type", "application/json")
-                with urllib.request.urlopen(req) as response:
-                    result = json.loads(response.read().decode("utf-8"))
-                    print("Telegram 通知已发送")
-                    if not result.get("ok"):
-                        print("API返回错误:", result)
-            except Exception as e:
-                print(f"发送 Telegram 通知失败: {e}")
-                exit(1)
-            '
+          try:
+              req = urllib.request.Request(url, data=encoded_data, method="POST")
+              req.add_header("Content-Type", "application/json")
+              with urllib.request.urlopen(req) as response:
+                  result = json.loads(response.read().decode("utf-8"))
+                  print("Telegram 通知已发送")
+                  if not result.get("ok"):
+                      print("API返回错误:", result)
+          except Exception as e:
+              print(f"发送 Telegram 通知失败: {e}")
+              exit(1)
+          '
