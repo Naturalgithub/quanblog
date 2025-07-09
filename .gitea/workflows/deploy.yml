@@ -12,7 +12,7 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions v4:https://ghproxy.net/https://github.com/actions/checkout
       - name: 检出代码
-        uses: https://gitea.com/actions/checkout@v4
+        uses: https://gitea.com/actions/checkout@v422
         with:
           fetch-depth: 0 # 获取完整历史以 222便 git 命令正常工作
 
@@ -26,7 +26,7 @@ jobs:
 
           # 安装 pnpm
           echo "安装 pnpm..."
-          npm install -a pnpm
+          npm install -g pnpm
 
           # 配置npm和pnpm使用淘宝镜像
           echo "配置npm和pnpm镜像源..."
