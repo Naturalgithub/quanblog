@@ -73,10 +73,9 @@ jobs:
           import os
 
           # 获取部署时间
-          deploy_time = os.environ.get("DEPLOY_TIME", "未知时间")
-
+          deploy_time = "$(date)"
           # 构建消息内容
-          message = "✅ 博客部署成功！\n\n📊 部署时间： " + deploy_time + "\n\n🔗 访问链接：\n▪️ 内网地址: http://192.168.2.102:17779\n▪️ 外网地址: http://blog.yuanquanke.cn:8888/"
+          message = "✅ *博客部署成功*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
 
           # 构建URL和数据
           token = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
