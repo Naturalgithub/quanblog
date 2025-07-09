@@ -73,25 +73,20 @@ jobs:
           import os
           import datetime
 
-          # 获取部署时间
           deploy_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-          # 构建消息内容 - 使用普通文本格式，避免MarkdownV2的转义问题
-          message = "✅ 博客部署成功！\n\n📊 部署时间： " + deploy_time + "\n\n🔗 访问链接：\n▪️ 内网地址: http://192.168.2.102:17779\n▪️ 外网地址: https://blog.yuanquanke.cn:8888"
+          message = "✅ *博客部署成功*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
 
-          # 构建URL和数据
           token = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
           chat_id = "5679555666"
           url = "https://proxy.yuanquanke.cn/https/api.telegram.org/bot" + token + "/sendMessage"
 
           data = {
               "chat_id": chat_id,
-              "text": message
-              # 移除parse_mode，使用普通文本
+              "text": message,
           }
           encoded_data = urllib.parse.urlencode(data).encode("utf-8")
 
-          # 发送请求
           try:
               req = urllib.request.Request(url, data=encoded_data, method="POST")
               req.add_header("Content-Type", "application/x-www-form-urlencoded")
