@@ -12,7 +12,7 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions v4:https://ghproxy.net/https://github.com/actions/checkout
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4:https://ghproxy.net/https://github.com/actions/checkout.git
         # with:
         #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
@@ -27,7 +27,11 @@ jobs:
           # 安装 pnpm
           echo "安装 pnpm..."
           npm install -g pnpm
-          pnpm --version
+
+          # 配置npm和pnpm使用淘宝镜像
+          echo "配置npm和pnpm镜像源..."
+          npm config set registry https://registry.npmmirror.com
+          pnpm config set registry https://registry.npmmirror.com
 
       # 安装依赖并构建
       - name: 安装依赖并构建
