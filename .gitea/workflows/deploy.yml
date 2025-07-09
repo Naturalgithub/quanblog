@@ -14,7 +14,7 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          repository: https://gitea.com
+          repository: https://gitea.com/actions/checkout
           fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
       # 设置 Node.js 环境
@@ -83,7 +83,7 @@ jobs:
 
           data = {
               "chat_id": chat_id,
-              "text": message
+              "text": message,
               "parse_mode":"MarkdownV2"
           }
           encoded_data = urllib.parse.urlencode(data).encode("utf-8")
