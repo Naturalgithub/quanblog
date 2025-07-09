@@ -18,7 +18,7 @@ export default defineConfig({
   // base,
   lang: 'zh-cn',
   title: 'yuanquanke',
-  description: 'yuanquanke的博客主题，基于 vitepress 实现',
+  description: '臭屁一只，yuanquanke的博客主题，基于 vitepress 实现',
   lastUpdated: true,
   // 详见：https://vitepress.dev/zh/reference/site-config#head
   head: [
