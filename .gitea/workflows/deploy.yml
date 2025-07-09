@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "部署 nginx docker..."
           # 确保先移除旧容器，无论其状态如何
-          docker rm -f blog-web || true
+          docker rmab -f blog-web || true
           # 拉取最新的nginx镜像
           docker pull nginx:alpine
           # 创建新容器
@@ -109,7 +109,6 @@ jobs:
           echo "❌ 博客部署失败！"
           echo "📊 部署时间: $(date)"
           echo "🌐 访问地址: https://blog.yuanquanke.cn:8888/"
-          message = "❌ *博客部署失败*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
           python3 -c '
           import urllib.request
           import urllib.parse
