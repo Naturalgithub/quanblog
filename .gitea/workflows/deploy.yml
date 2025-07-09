@@ -83,6 +83,7 @@ jobs:
           data = {
               "chat_id": chat_id,
               "text": message,
+              "parse_mode":"MarkdownV2"
           }
           encoded_data = urllib.parse.urlencode(data).encode("utf-8")
 
