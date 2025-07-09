@@ -71,9 +71,10 @@ jobs:
           import urllib.parse
           import json
           import os
+          import datetime
 
           # 获取部署时间
-          deploy_time = $(date)
+          deploy_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
           # 构建消息内容
           message = "✅ *博客部署成功*！\n\n📊 *部署时间*： " + deploy_time + "\n\n🔗 *访问链接*：\n▪️ [内网地址](http://192.168.2.102:17779)\n▪️ [外网地址](https://blog.yuanquanke.cn:8888)"
@@ -85,7 +86,8 @@ jobs:
 
           data = {
               "chat_id": chat_id,
-              "text": message
+              "text": message,
+              "parse_mode": "MarkdownV2"
           }
           encoded_data = urllib.parse.urlencode(data).encode("utf-8")
 
