@@ -87,13 +87,13 @@ jobs:
           data = {
               "chat_id": chat_id,
               "text": message,
-              "parse_mode":"MarkdownV2"
+              "parse_mode": "Markdown"
           }
-          encoded_data = urllib.parse.urlencode(data).encode("utf-8")
+          encoded_data = json.dumps(data).encode("utf-8")
 
           try:
               req = urllib.request.Request(url, data=encoded_data, method="POST")
-              req.add_header("Content-Type", "application/x-www-form-urlencoded")
+              req.add_header("Content-Type", "application/json")
               with urllib.request.urlopen(req) as response:
                   result = json.loads(response.read().decode("utf-8"))
                   print("Telegram 通知已发送")
