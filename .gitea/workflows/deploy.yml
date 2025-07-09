@@ -47,10 +47,15 @@ jobs:
       - name: 部署 nginx
         run: |
           echo "部署 nginx docker..."
-          docker stop blog-web || true
-          docker rmi blog-web || true
+          # 确保先移除旧容器，无论其状态如何
+          docker rm -f blog-web || true
+          # 拉取最新的nginx镜像
+          docker pull nginx:alpine
+          # 创建新容器
           docker run -d -p 17779:80 --name blog-web nginx:alpine
-          docker cp -rf docs/.vitepress/dist/* blog-web:/usr/share/nginx/html 
+          # 复制构建文件到容器
+          docker cp -rf docs/.vitepress/dist/. blog-web:/usr/share/nginx/html/
+          # 重新加载nginx配置
           docker exec blog-web nginx -s reload
 
       - name: 部署完成通知
