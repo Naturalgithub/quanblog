@@ -48,6 +48,14 @@ const blogTheme = getThemeConfig({
   // 文章默认作者
   author: 'yuanquanke',
 
+
+  comment: {
+    repo: 'Naturalgithub/quanblog',
+    repoId: 'R_kgDOPJeUzA',
+    category: 'General',
+    categoryId: 'DIC_kwDOPJeUzM4CssJK'
+  },
+
   // 友链
   friend: [
     {
@@ -91,7 +99,8 @@ const blogTheme = getThemeConfig({
       //   link: 'https://theme.sugarat.top/group.html',
       // }
     ],
-    duration: 0
+    // duration: 0  // 展示公告
+    duration: 100
   },
 })
 
