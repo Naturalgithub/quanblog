@@ -100,4 +100,4 @@ jobs:
           except Exception as e:
               print(f"发送 Telegram 通知失败: {e}")
               exit(1)
-          ' DEPLOY_TIME="$(date "+%Y-%m-%d %H:%M:%S")"
+          '
