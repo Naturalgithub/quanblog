@@ -13,9 +13,8 @@ jobs:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions v4:https://ghproxy.net/https://github.com/actions/checkout
       - name: 检出代码
         uses: actions/checkout@v4
-        with:
-          repository: https://gitea.com/actions/checkout
-          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
+        # with:
+        #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
       # 设置 Node.js 环境
       - name: 设置 Node.js 环境
