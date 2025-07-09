@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "设置 Node.js 环境..."
           # 检查 Node.js 版本
-          node3 --version
+          node --version
           npm --version
 
           # 安装 pnpm
