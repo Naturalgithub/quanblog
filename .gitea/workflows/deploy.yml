@@ -66,6 +66,10 @@ jobs:
           echo "🌐 访问地址: http://192.168.2.102:17779"
           # 格式化日期时间
           DEPLOY_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-          MESSAGE="*✅ 博客部署成功\*\!%0A%0A📊 *部署时间：* \`$DEPLOY_TIME\`%0A%0A🔗 *访问链接：*%0A▪️ [内网地址](http://192.168.2.102:17779)%0A▪️ [外网地址](http://blog.yuanquanke.cn:8888/)
+
+          # 定义消息内容（注意引号的正确闭合）
+          MESSAGE="*✅ 博客部署成功!*%0A%0A📊 *部署时间：* \`$DEPLOY_TIME\`%0A%0A🔗 *访问链接：*%0A▪️ [内网地址](http://192.168.2.102:17779)%0A▪️ [外网地址](http://blog.yuanquanke.cn:8888/)"
+
+          # 安装curl并发送通知
           apt-get update && apt-get install -y curl
           curl -s "https://proxy.yuanquanke.cn/https/api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=5679555666&parse_mode=MarkdownV2&text=$MESSAGE"
