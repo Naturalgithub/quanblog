@@ -44,16 +44,31 @@ jobs:
           echo "检查构建结果..."
           ls -la docs/.vitepress/dist || echo "构建目录不存在"
 
-      # 部署 nginx docker 暴露端口 17779
-      - name: 部署 nginx docker 容器名 blog-web 部署前需要删除之前 blog-web 容器 要判断是否有
+      - name: 安装AWS CLI
         run: |
-          echo "部署 nginx docker..."
-          docker stop blog-web || true
-          docker rmi blog-web || true
-          docker run -d -p 17779:80 --name blog-web nginx
-          docker cp docs/.vitepress/dist blog-web:/usr/share/nginx/html
-          docker exec blog-web nginx -s reload
-          docker ps
+          echo "看我表演变量：${{vars.ABC}}"
+          echo "安装AWS CLI..."
+          apt-get update && apt-get install -y curl unzip
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --connect-timeout 30 --retry 3 || echo "下载失败，但继续执行"
+          unzip -q awscliv2.zip || echo "解压失败，但继续执行"
+          ./aws/install || echo "安装失败，但继续执行"
+          rm -rf awscliv2.zip aws
+          which aws || echo "AWS CLI未找到"
+          aws --version
+
+      - name: 配置AWS
+        run: |
+          echo "配置AWS凭证..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set output json
+          aws configure set default.s3.addressing_style path
+          aws configure set default.s3.payload_signing_enabled true
+
+      - name: 上传到S3
+        run: |
+          echo "上传到S32"
+          aws s3 cp docs/.vitepress/dist/ s3://nas-web/blog/ --recursive --endpoint-url http://home.yuanquanke.cn:35246
 
       - name: 部署完成通知
         if: success()
