@@ -12,7 +12,7 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4:https://ghproxy.net/https://github.com/actions/checkout
         # with:
         #   fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
@@ -65,7 +65,6 @@ jobs:
           echo "📊 部署时间: $(date)"
           echo "🌐 访问地址: http://192.168.2.102:17779"
 
-          # 使用Python发送Telegram通知
           python3 -c '
           import urllib.request
           import urllib.parse
