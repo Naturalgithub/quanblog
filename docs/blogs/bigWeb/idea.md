@@ -9,14 +9,6 @@ sticky: 10
 
 ## 文章&博客
 
-### FE
-* 🚧 [【2024】我眼中的前端](./../_configDoc/show/whyfe-2024.md)
-* [ ] 历史周刊补齐（搬迁）
-* [ ] Vue 项目创建动态组件（局部动态内容）
-* [ ] github pages 部署博客主题
-* [ ] bun 系列
-* [ ] 浏览器里运行 Node demo
-* [ ] VitePress 插件开发
 
 ### 生产力工具
 * [ ] Arc 浏览器

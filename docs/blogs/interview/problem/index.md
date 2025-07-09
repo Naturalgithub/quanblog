@@ -326,43 +326,33 @@ tags:
 ## 网络
 <solve ok>
 
-[概述一下TCP](./../../computerBase/Internet/tcp.md)
 </solve>
 <solve ok>
 
-[概述一下UDP](./../../computerBase/Internet/udp.md)
 </solve>
 <solve ok>
 
-[TCP与UDP区别](./../../computerBase/Internet/tcp-udp.md)
 </solve>
 <solve ok>
 
-[概述HTTP](./../../computerBase/Internet/http.md)
 </solve>
 <solve ok>
 
-[HTTP与HTTPS的区别](./../../computerBase/Internet/http.md#HTTPS)
 </solve>
 <solve ok>
 
-[TLS协议握手过程,如何工作的](./../../computerBase/Internet/http.md#TLS)
 </solve>
 <solve ok>
 
-[HTTP2的特点](./../../computerBase/Internet/http.md#http2)
 </solve>
 <solve ok>
 
-[如何才能使用HTTP2,有什么前提条件](./../../computerBase/Internet/http.md#如何使用)
 </solve>
 <solve ok>
 
-[HTTP3中使用的QUIC协议基于UDP的原因?](./../../computerBase/Internet/http.md#QUIC)
 </solve>
 <solve ok>
 
-[如果响应头Content-Length=0那么是发出来被截取了还是没发出来?](./../../computerBase/Internet/clength.md)
 </solve>
 <solve ok>
 
@@ -372,15 +362,10 @@ tags:
 ## 操作系统
 <solve ok>
 
-[线程与进程的概念/区别/如何工作的?](./../../computerBase/os/difprothr.md)
+
 </solve>
 <solve ok>
 
-[进程和线程怎么通信?](./../../computerBase/os/communicate.md)
-</solve>
-<solve ok>
-
-[什么是死锁?为什么会出现?如何避免](./../../computerBase/os/deadlock.md)
 </solve>
 <solve>进程之间如何进行切换的?</solve>
 <solve>几种常见的页面置换算法</solve>
