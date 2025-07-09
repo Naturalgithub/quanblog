@@ -54,7 +54,7 @@ jobs:
           # 创建新容器
           docker run -d -p 17779:80 --name blog-web nginx:alpine
           # 复制构建文件到容器
-          docker cp -rf docs/.vitepress/dist/. blog-web:/usr/share/nginx/html/
+          docker cp docs/.vitepress/dist/. blog-web:/usr/share/nginx/html
           # 重新加载nginx配置
           docker exec blog-web nginx -s reload
 
