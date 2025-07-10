@@ -7,7 +7,9 @@ import timeline from "vitepress-markdown-timeline";
 import mdItSub from "markdown-it-sub"
 import mdItSup from "markdown-it-sup"
 import mdItMark from "markdown-it-mark"
+import { sidebar } from "./config-dict"
 
+// import AutoNav from "vite-plugin-vitepress-auto-nav";
 // 如果使用 GitHub/Gitee Pages 等公共平台部署
 // 通常需要修改 base 路径，通常为“/仓库名/”
 // 如果项目名已经为 name.github.io 域名，则不需要修改！
@@ -46,7 +48,39 @@ export default defineConfig({
       placeholder: '搜索文档',
       emptyText: '空空如也',
       heading: '共: {{searchResult}} 条结果'
-    })],
+    }),
+      // AutoNav({
+      //   pattern: ["**/!(README|TODO).md"], // 排除README和TODO文件
+      //   itemsSetting: {
+      //     'Life': { title: '生活' },
+      //     'ai': { title: 'AI' },
+      //     'bigWeb': { title: '大前端' },
+      //     'coding': { title: '编程' },
+      //     'frontendEngineering': { title: '前端工程化' },
+      //     'interview': { title: '面试' },
+      //     'invest': { title: '投资' },
+      //     'reader': { title: '阅读' },
+      //     // 可以根据需要隐藏某些目录
+      //     'home': { hide: true }
+      //   },
+      //   compareFn: (a, b) => {
+      //     // 优先按sort值排序，其次按最后修改时间降序排列（最新的在前面）
+      //     if (a.options.sort !== undefined && b.options.sort !== undefined) {
+      //       return a.options.sort - b.options.sort;
+      //     }
+      //     if (a.options.sort !== undefined) {
+      //       return a.options.sort - b.index;
+      //     }
+      //     if (b.options.sort !== undefined) {
+      //       return a.index - b.options.sort;
+      //     }
+      //     // 按最后提交时间或修改时间降序排列
+      //     return (b.options.lastCommitTime || b.options.modifyTime || 0) -
+      //       (a.options.lastCommitTime || a.options.modifyTime || 0);
+      //   },
+      //   useArticleTitle: true // 使用文章中的一级标题作为导航项名称
+      // }),
+    ],
   },
   themeConfig: {
     // 展示 2,3 级标题在目录中
@@ -59,6 +93,7 @@ export default defineConfig({
     sidebarMenuLabel: '相关文章',
     lastUpdatedText: '上次更新于',
     // 设置logo
+    sidebar: sidebar,
     logo: '/logo.png',
     // editLink: {
     //   pattern:
