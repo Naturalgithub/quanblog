@@ -12,7 +12,7 @@ tags:
 
 今天臭屁做了一道非常美味的红烧肉，肉质酥烂，色泽红亮，香气四溢，肥而不腻。这道菜不仅色香味俱全，而且制作过程也很有趣。
 
-![红烧肉成品图](http://quan-img-upyun.test.upcdn.net/img/blog/168361752137807_.pic.jpg)
+![红烧肉成品图](https://img-bed.yuanquanke.cn/img/blog/168361752137807_.pic.jpg)
 
 ## 食材准备
 
@@ -49,6 +49,6 @@ tags:
 
 最终成品色泽红亮，肉质酥烂，香气四溢，肥而不腻，配上一碗米饭，简直是人间美味！
 
-![红烧肉成品图](http://quan-img-upyun.test.upcdn.net/img/blog/168361752137807_.pic.jpg)
+![红烧肉成品图](https://img-bed.yuanquanke.cn/img/blog/168361752137807_.pic.jpg)
 
 这道红烧肉不仅好吃，而且制作过程也很有成就感。希望大家也能尝试做一下，享受美食的同时也能感受烹饪的乐趣！
