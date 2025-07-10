@@ -1,9 +1,8 @@
 ---
 title: 我的臭屁女朋友
-date: 2025-07-10
+date: 2020-07-10
 tags: [生活, 爱情]
 categories: [生活随笔]
-top: true
 ---
 
 # 我的臭屁女朋友
@@ -42,7 +41,7 @@ top: true
 
 "看，我买了这么多，才花了这么点钱，是不是很厉害？"
 
-![购物达人](https://alist.yuanquanke.cn:8888/d/115/tmp/blog-web/static/IMG_8415.jpeg?sign=ZqX-fMgQI4fFZXkvou_edtfs23h1xJzNf5YG8tm4uqE=:0)
+![购物达人](https://alist.yuanquanke.cn:8888/d/115/tmp/blog-web/static/4B435E0C-B75E-4E15-814A-0705C422A298_1_105_c.jpeg?sign=xO7MWiA5tkzvCh-5BgBhs3KZ4EVAQX9OHfDt6Tnosvs=:0)
 
 ## 可爱的小习惯
 
@@ -54,7 +53,7 @@ top: true
 
 她是个不折不扣的吃货。每次出门，她总能找到当地最好吃的餐厅。而且，她总是能在吃得津津有味的同时，保持完美的身材——这大概是我最嫉妒她的地方。
 
-![美食时刻](https://alist.yuanquanke.cn:8888/d/115/tmp/blog-web/static/IMG_8415.jpeg?sign=ZqX-fMgQI4fFZXkvou_edtfs23h1xJzNf5YG8tm4uqE=:0) 
+![美食时刻](https://alist.yuanquanke.cn:8888/d/115/tmp/blog-web/static/IMG_8415.jpeg?sign=ZqX-fMgQI4fFZXkvou_edtfs23h1xJzNf5YG8tm4uqE=:0)
 
 ## 我们的旅行
 
