@@ -24,16 +24,16 @@ export const sidebar: any = {
             "text": "AI",
             "items": [
                 {
-                    "text": "掘金",
-                    "link": "/blogs/ai/juejin"
+                    "text": "我如何使用Coze来分析掘金热榜数据 | Coze插件开发",
+                    "link": "/blogs/ai/juejin-hot-rank-bot"
                 },
                 {
-                    "text": "doubao",
+                    "text": "使用豆包 MarsCode IDE 搭建 VitePress博客并使用 GitHub 部署",
                     "link": "/blogs/ai/doubao"
                 },
                 {
-                    "text": "diffusion",
-                    "link": "/blogs/ai/diffusion"
+                    "text": "Mac 安装 stable-diffusion",
+                    "link": "/blogs/ai/stable-diffusion/mac-install"
                 }
             ]
         }
