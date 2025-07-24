@@ -107,7 +107,7 @@ export default defineConfig({
         items: [
           { text: '重温《老人与海》', link: '/blogs/reader/hemingway/h01' },
           { text: '重温《祝福》', link: '/blogs/reader/luxun/luxun' },
-          { text: '鲁迅为何喜欢“喷”人', link: '/blogs/reader/luXunMaRen/lu' },
+          { text: '鲁迅为何喜欢“喷”人 ', link: '/blogs/reader/luXunMaRen/lu' },
         ]
       },
       { text: 'AI', link: '/blogs/ai' },
@@ -121,14 +121,10 @@ export default defineConfig({
           { text: '手撕代码', link: '/blogs/interview/code/' },
           { text: '性能优化', link: '/blogs/interview/performance/' },
           { text: "网络", link: "/interview/internet/" },
-          // { text: '操作系统', link: '/interview/os/' },
-          // { text: '设计模式', link: '/interview/design/' },
           { text: '综合问题', link: '/blogs/interview/other/' },
-          // { text: '面经', link: '/interview/experience/' }
         ]
       },
       { text: '关于', link: '/blogs/about' },
-      // { text: '关于作者', link: 'https://sugarat.top/aboutme.html' }
     ],
 
     socialLinks: [
