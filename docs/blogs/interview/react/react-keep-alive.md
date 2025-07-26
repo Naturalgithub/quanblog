@@ -367,5 +367,3 @@ const useCacheDebugger = () => {
 - [React Context 最佳实践](https://react.dev/learn/passing-data-deeply-with-context)
 
 ---
-
-*本文代码已在 GitHub 开源，欢迎 Star 和贡献代码！*
