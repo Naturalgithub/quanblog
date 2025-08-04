@@ -15,7 +15,7 @@
 *和臭屁女朋友在白沙洲的悠闲散步*
 
 <video width="100%" height="400" controls>
-  <source src="http://http://quan-img-upyun.test.upcdn.net/img/blog/choupi001/IMG_3949.MOV" type="video/mp4">
+  <source src="https://img-bed.yuanquanke.cn/img/blog/choupi001/IMG_3949.MOV" type="video/mp4">
   <source src="https://api.suyanw.cn/meinv/" type="video/mp4">
   您的浏览器不支持视频播放。
 </video>
