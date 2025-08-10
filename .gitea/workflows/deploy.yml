@@ -23,6 +23,7 @@ jobs:
           # 检查 Node.js 版本
           node --version
           npm --version
+          pnpm --version
 
           # 安装 pnpm
           echo "安装 pnpm..."
