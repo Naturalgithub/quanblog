@@ -65,7 +65,7 @@ jobs:
             pnpm store prune || true
             
             # 尝试安装
-            if pnpm install --no-frozen-lockfile --network-timeout 300000 --fetch-retries 5; then
+            if pnpm install --no-frozen-lockfile --network-timeout 3000 --fetch-retries 5; then
               echo "$registry_name 安装成功！"
               return 0
             else
