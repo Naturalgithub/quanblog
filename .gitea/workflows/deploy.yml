@@ -26,25 +26,22 @@ jobs:
 
           # 安装 pnpm
           echo "安装 pnpm..."
-          npm install -g pnpm
+          npm install -g yarn
 
           # 配置npm和pnpm使用淘宝镜像
           echo "配置npm和pnpm镜像源..."
-          # npm config set registry https://registry.npmmirror.com
-          # pnpm config set registry https://registry.npmmirror.com
-          npm config set registry https://registry.npmjs.org
-          pnpm config set registry https://registry.npmjs.org
+          yarn config set registry https://registry.npmmirror.com
 
       # 安装依赖并构建
       - name: 安装依赖并构建
         run: |
           echo "安装项目依赖..."
           # 使用 --no-frozen-lockfile 允许更新锁文件，解决镜像源变更问题
-          pnpm install --no-frozen-lockfile
+          yarn install
 
           echo "构建博客..."
           # 修改为正确的构建命令
-          pnpm run build
+          yarn run build
 
           # 检查构建结果
           echo "检查构建结果..."
