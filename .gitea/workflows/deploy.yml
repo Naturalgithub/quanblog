@@ -14,7 +14,7 @@ jobs:
       - name: 检出代码
         uses: https://gitea.com/actions/checkout@v4
         with:
-          fetch-depth: 0 # 获取完整历史以 222便 git 命令正常工作
+          fetch-depth: 0 # 获取完整历史以便 git 命令正常工作
 
       # 设置 Node.js 环境
       - name: 设置 Node.js 环境
@@ -28,21 +28,70 @@ jobs:
           echo "安装 pnpm..."
           npm install -g pnpm
 
-          # 配置npm和pnpm使用淘宝镜像
+          # 网络连通性检查
+          echo "检查网络连通性..."
+          curl -I --connect-timeout 10 --max-time 30 https://registry.npmmirror.com/ || echo "淘宝镜像连接失败"
+          curl -I --connect-timeout 10 --max-time 30 https://registry.npmjs.org/ || echo "官方镜像连接失败"
+
+          # 配置npm和pnpm使用淘宝镜像，添加超时和重试参数
           echo "配置npm和pnpm镜像源..."
           npm config set registry https://registry.npmmirror.com
+          npm config set timeout 300000
+          npm config set fetch-retries 5
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+
           pnpm config set registry https://registry.npmmirror.com
+          pnpm config set network-timeout 300000
+          pnpm config set fetch-retries 5
+          pnpm config set fetch-retry-mintimeout 20000
+          pnpm config set fetch-retry-maxtimeout 120000
 
       # 安装依赖并构建
       - name: 安装依赖并构建
         run: |
           echo "安装项目依赖..."
-          # 使用 --no-frozen-lockfile 允许更新锁文件，解决镜像源变更问题
-          pnpm install --no-frozen-lockfile
+
+          # 定义重试函数
+          retry_install() {
+            local registry=$1
+            local registry_name=$2
+            echo "尝试使用 $registry_name 安装依赖..."
+            
+            pnpm config set registry $registry
+            npm config set registry $registry
+            
+            # 清理缓存
+            pnpm store prune || true
+            
+            # 尝试安装
+            if pnpm install --no-frozen-lockfile --network-timeout 300000 --fetch-retries 5; then
+              echo "$registry_name 安装成功！"
+              return 0
+            else
+              echo "$registry_name 安装失败"
+              return 1
+            fi
+          }
+
+          # 按优先级尝试不同镜像源
+          if ! retry_install "https://registry.npmmirror.com" "淘宝镜像"; then
+            echo "淘宝镜像失败，尝试官方镜像..."
+            if ! retry_install "https://registry.npmjs.org" "官方镜像"; then
+              echo "官方镜像失败，尝试腾讯云镜像..."
+              if ! retry_install "https://mirrors.cloud.tencent.com/npm/" "腾讯云镜像"; then
+                echo "所有镜像源都失败，最后尝试华为云镜像..."
+                if ! retry_install "https://repo.huaweicloud.com/repository/npm/" "华为云镜像"; then
+                  echo "❌ 所有镜像源都无法使用，依赖安装失败"
+                  exit 1
+                fi
+              fi
+            fi
+          fi
 
           echo "构建博客..."
-          # 修改为正确的构建命令
-          pnpm run build
+          # 使用正确的构建命令
+          pnpm run docs:build
 
           # 检查构建结果
           echo "检查构建结果..."
