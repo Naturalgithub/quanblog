@@ -26,6 +26,7 @@ jobs:
 
           # 安装 yarn
           echo "安装 yarn..."
+          npm config set registry https://registry.npmmirror.com
           npm install -g yarn
 
           # 配置yarn使用淘宝镜像
