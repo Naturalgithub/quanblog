@@ -24,13 +24,14 @@ jobs:
           node --version
           npm --version
 
-          # 安装 pnpm
-          echo "安装 pnpm..."
+          # 安装 yarn
+          echo "安装 yarn..."
           npm install -g yarn
 
-          # 配置npm和pnpm使用淘宝镜像
-          echo "配置npm和pnpm镜像源..."
-          yarn config set registry https://registry.npmmirror.com
+          # 配置yarn使用淘宝镜像
+          echo "配置yarn镜像源..."
+          npm config set registry https://registry.npmmirror.com
+          # yarn config set registry https://registry.npmmirror.com
 
       # 安装依赖并构建
       - name: 安装依赖并构建
