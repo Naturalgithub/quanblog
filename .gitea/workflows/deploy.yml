@@ -30,10 +30,8 @@ jobs:
 
           # 配置npm和pnpm使用淘宝镜像
           echo "配置npm和pnpm镜像源..."
-          # npm config set registry https://registry.npmmirror.com
-          # pnpm config set registry https://registry.npmmirror.com
-          npm config set registry https://registry.npmjs.org
-          pnpm config set registry https://registry.npmjs.org
+          npm config set registry https://registry.npmmirror.com
+          pnpm config set registry https://registry.npmmirror.com
 
       # 安装依赖并构建
       - name: 安装依赖并构建
