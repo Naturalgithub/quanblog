@@ -91,7 +91,7 @@ jobs:
 
           echo "构建博客..."
           # 使用正确的构建命令
-          pnpm run docs:build
+          pnpm run build
 
           # 检查构建结果
           echo "检查构建结果..."
