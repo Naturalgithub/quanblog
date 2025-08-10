@@ -23,7 +23,6 @@ jobs:
           # 检查 Node.js 版本
           node --version
           npm --version
-          yarn --version
 
           # 安装 yarn
           echo "安装 yarn..."
