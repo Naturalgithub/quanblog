@@ -26,13 +26,11 @@ jobs:
 
           # 安装 yarn
           echo "安装 yarn..."
-          npm config set registry https://registry.npmmirror.com
           npm install -g yarn
 
           # 配置yarn使用淘宝镜像
           echo "配置yarn镜像源..."
-          npm config set registry https://registry.npmmirror.com
-          # yarn config set registry https://registry.npmmirror.com
+          yarn config set registry https://registry.npmmirror.com
 
       # 安装依赖并构建
       - name: 安装依赖并构建
