@@ -33,7 +33,7 @@ jobs:
           npm config set registry https://registry.npmmirror.com
           pnpm config set registry https://registry.npmmirror.com
 
-      # 安装依赖并构建
+      # 安装依赖并构建1
       - name: 安装依赖并构建
         run: |
           echo "安装项目依赖..."
