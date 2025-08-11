@@ -106,7 +106,7 @@ jobs:
       - name: 部署失败通知
         if: failure()
         run: |
-          echo "❌ 泉的博客部署失败！"
+          echo "❌ 泉的博客部署失败 1！"
           echo "📊 部署时间: $(date)"
           echo "🌐 访问地址: https://blog.yuanquanke.cn:8888/"
           python3 -c '
