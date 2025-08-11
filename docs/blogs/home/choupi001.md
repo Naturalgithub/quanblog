@@ -1,5 +1,5 @@
 ---
-title: 臭屁001 - 白沙洲的黄昏漫步
+title: 臭屁 - 白沙洲的黄昏漫步
 date: 2025-08-04
 hidden: true
 tags:
