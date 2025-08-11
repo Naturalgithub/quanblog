@@ -29,7 +29,7 @@ jobs:
           npm install -g pnpm
 
           # 配置npm和pnpm使用淘宝镜像
-          echo "无需配置npm和pnpm镜像源 123..."
+          echo "无需配置npm和pnpm镜像源..."
           # npm config set registry https://registry.npmmirror.com
           # pnpm config set registry https://registry.npmmirror.com
 
