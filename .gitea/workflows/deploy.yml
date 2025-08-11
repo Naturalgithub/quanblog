@@ -54,7 +54,7 @@ jobs:
           # 确保先移除旧容器，无论其状态如何
           docker rm -f blog-web || true
           # 拉取最新的nginx镜像
-          docker pull docker.m.daocloud.io/nginx:alpine
+          docker pull nginx:alpine
           # 创建新容器
           docker run -d -p 17779:80 --name blog-web nginx:alpine
           # 复制构建文件到容器
