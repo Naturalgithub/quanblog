@@ -16,52 +16,6 @@ jobs:
         with:
           fetch-depth: 0 # 获取完整历史以 222便 git 命令正常工作
 
-      # 设置 Node.js 环境
-      - name: 设置 Node.js 环境
-        run: |
-          echo "设置 Node.js 环境..."
-          # 检查 Node.js 版本
-          node --version
-          npm --version
-
-          # 安装 pnpm
-          echo "安装 pnpm..."
-          npm install -g pnpm
-
-          # 配置npm和pnpm使用淘宝镜像
-          echo "无需配置npm和pnpm镜像源..."
-          # npm config set registry https://registry.npmmirror.com
-          # pnpm config set registry https://registry.npmmirror.com
-
-      # 安装依赖并构建
-      - name: 安装依赖并构建
-        run: |
-          echo "安装项目依赖..."
-          # 使用 --no-frozen-lockfile 允许更新锁文件，解决镜像源变更问题
-          pnpm install --no-frozen-lockfile
-
-          echo "构建博客..."
-          # 修改为正确的构建命令
-          pnpm run build
-
-          # 检查构建结果
-          echo "检查构建结果..."
-          ls -la docs/.vitepress/dist || echo "构建目录不存在"
-
-      - name: 部署 nginx
-        run: |
-          echo "部署 nginx docker..."
-          # 确保先移除旧容器，无论其状态如何
-          docker rm -f blog-web || true
-          # 拉取最新的nginx镜像
-          docker pull docker.1ms.run/nginx:alpine
-          # 创建新容器
-          docker run -d -p 17779:80 --name blog-web docker.1ms.run/nginx:alpine
-          # 复制构建文件到容器
-          docker cp docs/.vitepress/dist/. blog-web:/usr/share/nginx/html
-          # 重新加载nginx配置
-          docker exec blog-web nginx -s reload
-
       - name: 部署完成通知
         if: success()
         run: |
