@@ -62,7 +62,7 @@ jobs:
           # 重新加载nginx配置
           docker exec blog-web nginx -s reload
 
-      - name: 部署完成通知1
+      - name: 部署完成通知
         if: success()
         run: |
           echo "✅ 博客已成功部署到服务器"
