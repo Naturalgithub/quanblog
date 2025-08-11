@@ -12,7 +12,8 @@ jobs:
     steps:
       # 检出代码 - 使用内置的检出操作，不依赖外部 actions v4:https://ghproxy.net/https://github.com/actions/checkout
       - name: 检出代码
-        uses: https://gitea.com/actions/checkout@v4
+        # uses: https://gitea.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
         with:
           fetch-depth: 0 # 获取完整历史以 222便 git 命令正常工作
 
