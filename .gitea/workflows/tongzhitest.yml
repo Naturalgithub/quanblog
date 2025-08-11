@@ -57,7 +57,7 @@ jobs:
               print(f"发送 Telegram 通知失败: {e}")
               exit(1)
           '
-      - name: 部署失败通知
+      - name: 部署失败通知1
         if: failure()
         run: |
           echo "❌ 泉的博客部署失败！"
